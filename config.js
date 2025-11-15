@@ -1,4 +1,3 @@
-// Bwm xmd by Ibrahim Adams 
 
 const fs = require('fs-extra');
 const { Sequelize } = require('sequelize');
@@ -359,7 +358,7 @@ module.exports = {
     sessionId: hybridConfig.getSessionId(),
     PREFIX: process.env.PREFIX || ".",
     GURL: 'https://whatsapp.com/channel/0029VaZuGSxEawdxZK9CzM0Y',
-    OWNER_NAME: process.env.OWNER_NAME || "Ibrahim Adams",
+    OWNER_NAME: process.env.OWNER_NAME || "Aslam max",
     OWNER_NUMBER: process.env.OWNER_NUMBER || "",
     BOT: process.env.BOT_NAME || 'BMW_MD',
     BWM_XMD: hybridConfig.buildContentLayer(),
@@ -396,9 +395,9 @@ module.exports = {
     
     
     BOT_URL: process.env.BOT_URL ? process.env.BOT_URL.split(',') : [
-        'https://res.cloudinary.com/dptzpfgtm/image/upload/v1748879883/whatsapp_uploads/e3eprzkzxhwfx7pmemr5.jpg',
-        'https://res.cloudinary.com/dptzpfgtm/image/upload/v1748879901/whatsapp_uploads/hqagxk84idvf899rhpfj.jpg',
-        'https://res.cloudinary.com/dptzpfgtm/image/upload/v1748879921/whatsapp_uploads/bms318aehnllm6sfdgql.jpg'
+        'https://url.bwmxmd.online/Adams.fwzxhzl7.jpg',
+        'https://url.bwmxmd.online/Adams.fwzxhzl7.jpg',
+        'https://url.bwmxmd.online/Adams.fwzxhzl7.jpg'
     ],
     
     MENU_TOP_LEFT: process.env.MENU_TOP_LEFT || "┌─❖",
@@ -412,7 +411,7 @@ module.exports = {
     MENU_STATS_LINE: process.env.MENU_STATS_LINE || "│⭐ ",
     MENU_BOTTOM_DIVIDER: process.env.MENU_BOTTOM_DIVIDER || "└─────────────┈⳹",
     
-    FOOTER: process.env.BOT_FOOTER || '\n\nFor more info visit: bwmxmd.online\n\n®2025 ʙᴡᴍ xᴍᴅ 🔥',
+    FOOTER: process.env.BOT_FOOTER || '\n\nFor more info visit: dullahxmd.top 🔥',
     DATABASE_URL,
     DATABASE: DATABASE_URL === databasePath
         ? "postgresql://postgres:bKlIqoOUWFIHOAhKxRWQtGfKfhGKgmRX@viaduct.proxy.rlwy.net:47738/railway"
