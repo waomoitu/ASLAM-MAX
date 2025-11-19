@@ -1,4 +1,4 @@
-# ASLAM MAS WhatsApp Bot 🤖
+# Aslam max WhatsApp Bot 🤖
 
 ![ASLAM MAX Bot Logo](https://url.bwmxmd.online/Adams.r0zswbk4.jpg)
 
