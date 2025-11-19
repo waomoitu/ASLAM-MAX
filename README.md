@@ -1,8 +1,8 @@
 # ASLAM MAS WhatsApp Bot 🤖
 
-![ASLAM MAS Bot Logo](https://url.bwmxmd.online/Adams.r0zswbk4.jpg)
+![ASLAM MAX Bot Logo](https://url.bwmxmd.online/Adams.r0zswbk4.jpg)
 
-Welcome to **ASLAM MAS WhatsApp Bot** – your next-generation, smart, and powerful WhatsApp assistant built for fun, automation, and more! 🚀
+Welcome to **ASLAM MAX WhatsApp Bot** – your next-generation, smart, and powerful WhatsApp assistant built for fun, automation, and more! 🚀
 
 ---
 
