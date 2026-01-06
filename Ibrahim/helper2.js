@@ -1,7 +1,7 @@
 
 // utils/contextManager.js
 const NEWS_LETTER_JID = "120363285388090068@newsletter";
-const BOT_NAME = "BWM-XMD";
+const BOT_NAME = "ASLAM-MAX";
 const thumbnails = [
                 "https://files.catbox.moe/165qf7.jpg",
                 "https://files.catbox.moe/24j10y.jpeg"
