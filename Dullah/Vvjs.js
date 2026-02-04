@@ -7,7 +7,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 const dullaConfig = require(__dirname + "/../config");
-global.dullah = global.dullah || dullaConfig;
+// global.dullah is set by index.js
 
 async function fetchVVJSUrl() {
   try {
