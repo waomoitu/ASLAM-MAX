@@ -12,7 +12,7 @@ const dullaConfig = require("./config");
 // Global command registry for the bot framework
 global.commands = global.commands || [];
 
-// Create global dullah function for command registration (Zokou-style framework)
+
 global.dullah = function(options, handler) {
   if (typeof options === 'object' && typeof handler === 'function') {
     global.commands.push({ options, handler });
