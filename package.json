@@ -23,9 +23,9 @@
     "bmwxmd",
     "quantum",
     "whatsapp-bot",
-    "Ibrahim-Adams"
+    "Aslam-Dullah"
   ],
-  "author": "Ibrahim Adams",
+  "author": "Aslam Dullah",
   "license": "ISC",
   "dependencies": {
     "@adiwajshing/keyed-db": "^0.2.4",        

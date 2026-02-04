@@ -352,7 +352,9 @@ class HybridConfigManager {
 
 
 const hybridConfig = new HybridConfigManager();
-module.exports = {
+
+// Create a callable function that also has all config properties
+const configObj = {
     hybridConfig,
     session: process.env.SESSION_ID || '',
     sessionId: hybridConfig.getSessionId(),
@@ -417,6 +419,22 @@ module.exports = {
         ? "postgresql://postgres:bKlIqoOUWFIHOAhKxRWQtGfKfhGKgmRX@viaduct.proxy.rlwy.net:47738/railway"
         : "postgresql://postgres:bKlIqoOUWFIHOAhKxRWQtGfKfhGKgmRX@viaduct.proxy.rlwy.net:47738/railway",
 };
+
+// Make config callable as a function while preserving all properties
+function dullah(key) {
+    if (key) return configObj[key];
+    return configObj;
+}
+
+// Attach all properties to the function so it works as both function and object
+Object.keys(configObj).forEach(key => {
+    Object.defineProperty(dullah, key, {
+        get: function() { return configObj[key]; },
+        enumerable: true
+    });
+});
+
+module.exports = dullah;
 
 let fichier = require.resolve(__filename);
 fs.watchFile(fichier, () => {

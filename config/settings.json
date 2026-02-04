@@ -1,0 +1,27 @@
+{
+  "metadata": {
+    "version": "1.0.0",
+    "created": "2026-02-04T12:43:00.579Z",
+    "sessionId": "session_1770208980579_41kios43o"
+  },
+  "settings": {
+    "AUDIO_CHATBOT": "no",
+    "AUTO_BIO": "no",
+    "AUTO_DOWNLOAD_STATUS": "no",
+    "AUTO_REACT": "no",
+    "AUTO_REACT_STATUS": "yes",
+    "AUTO_READ": "no",
+    "AUTO_READ_STATUS": "yes",
+    "CHATBOT": "no",
+    "PUBLIC_MODE": "yes",
+    "STARTING_BOT_MESSAGE": "yes",
+    "PRESENCE": ".",
+    "ANTIDELETE_RECOVER_CONVENTION": "no",
+    "ANTIDELETE_SENT_INBOX": "yes",
+    "GOODBYE_MESSAGE": "no",
+    "AUTO_REJECT_CALL": "no",
+    "WELCOME_MESSAGE": "no",
+    "GROUPANTILINK": "no",
+    "AUTO_REPLY_STATUS": "no"
+  }
+}
