@@ -30,7 +30,7 @@
     "@hapi/boom": "^10.0.1",
     "@octokit/rest": "^22.0.0",
     "@types/node": "^18.0.6",
-    "@whiskeysockets/baileys": "npm:xmd-baileys@latest",
+    "@whiskeysockets/baileys": "npm:creepy-baileys",
     "@xaviabot/fb-downloader": "^1.0.14",
     "acrcloud": "^1.4.0",
     "adm-zip": "^0.5.16",
