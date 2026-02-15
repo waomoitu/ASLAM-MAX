@@ -1,35 +1,24 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
+const { dullah } = require("../Aslam/dullah");
+const fancy = require("../Dullah/stylish");
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+dullah({ nomCom: "fancy", categorie: "Fun", reaction: "〽️" }, async (dest, zk, commandeOptions) => {
+    const { arg, repondre, prefixe } = commandeOptions;
+    const id = arg[0]?.match(/\d+/)?.join('');
+    const text = arg.slice(1).join(" ");
 
-async function fetchFANCYUrl() {
-  try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
+    try {
+        if (id === undefined || text === undefined) {
+            return await repondre(`\nExemple : ${prefixe}fancy 10 Aslam max\n` + String.fromCharCode(8206).repeat(4001) + fancy.list('Aslam max', fancy));
+        }
 
-    const targetElement = $('a:contains("FANCY")');
-    const targetUrl = targetElement.attr('href');
-
-    if (!targetUrl) {
-      throw new Error('FANCY not found 😭');
+        const selectedStyle = fancy[parseInt(id) - 1];
+        if (selectedStyle) {
+            return await repondre(fancy.apply(selectedStyle, text));
+        } else {
+            return await repondre('_Style introuvable :(_');
+        }
+    } catch (error) {
+        console.error(error);
+        return await repondre('_Une erreur s\'est produite :(_');
     }
-
-    console.log('FANCY loaded successfully ✅');
-
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
-
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-}
-
-fetchFANCYUrl();
+});

@@ -1,11 +1,16 @@
 const { dullah } = require("../Aslam/dullah");
-const axios = require("axios");
 const { downloadContentFromMessage } = require("@whiskeysockets/baileys");
 const fs = require("fs-extra");
-const { Catbox } = require("node-catbox");
 const path = require("path");
+const cloudinary = require('cloudinary').v2;
 
-const catbox = new Catbox();
+// Configure Cloudinary
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dptzpfgtm',
+  api_key: process.env.CLOUDINARY_API_KEY || '247319227263335',
+  api_secret: process.env.CLOUDINARY_API_SECRET || 'OzNSWLPujncaia9d_XG9sWtMkxo',
+  secure: true
+});
 
 // Utility function to download media
 async function downloadMedia(mediaMessage, mediaType) {
@@ -30,23 +35,24 @@ async function streamToBuffer(stream) {
     });
 }
 
-// Upload file to Catbox and return URL without https://
-async function uploadToCatbox(filePath) {
-    if (!fs.existsSync(filePath)) {
-        throw new Error("File does not exist");
-    }
-
+// Upload file to Cloudinary and return URL without protocol
+async function uploadToCloudinary(filePath, mediaType) {
     try {
-        const response = await catbox.uploadFile({ path: filePath });
-        // Remove https:// from the URL if present
-        return response ? response.replace(/^https?:\/\//, '') : "Upload failed";
+        const options = {
+            resource_type: mediaType === "video" ? "video" : "auto",
+            folder: "whatsapp_uploads"
+        };
+
+        const result = await cloudinary.uploader.upload(filePath, options);
+        // Remove https:// from the URL
+        return result.secure_url.replace(/^https?:\/\//, '');
     } catch (err) {
-        throw new Error("Upload Error: " + err);
+        throw new Error("Cloudinary Upload Error: " + err.message);
     }
 }
 
 // Command logic
-dullah({ nomCom: "url", categorie: "General", reaction: "🌐" }, async (origineMessage, zk, commandeOptions) => {
+dullah({ nomCom: "url2", categorie: "General", reaction: "🌐" }, async (origineMessage, zk, commandeOptions) => {
     const { msgRepondu, repondre } = commandeOptions;
 
     if (!msgRepondu) {
@@ -60,7 +66,7 @@ dullah({ nomCom: "url", categorie: "General", reaction: "🌐" }, async (origine
         if (msgRepondu.videoMessage) {
             const videoSize = msgRepondu.videoMessage.fileLength;
             if (videoSize > 50 * 1024 * 1024) {
-                repondre("🚨 The video is too large. Please send a smaller one.");
+                repondre("🚨 The video is too large (max 50MB). Please send a smaller one.");
                 return;
             }
             mediaPath = await downloadMedia(msgRepondu.videoMessage, "video");
@@ -83,30 +89,22 @@ dullah({ nomCom: "url", categorie: "General", reaction: "🌐" }, async (origine
             return;
         }
 
-        // Upload and get URL without https://
-        const catboxUrl = await uploadToCatbox(mediaPath);
+        // Upload and get URL without protocol
+        const cloudinaryUrl = await uploadToCloudinary(mediaPath, mediaType);
         fs.unlinkSync(mediaPath); // Cleanup after upload
 
         // Reply with the correct type
-        switch (mediaType) {
-            case "image":
-                repondre(`🖼 Image URL:\n${catboxUrl}`);
-                break;
-            case "video":
-                repondre(`🎬 Video URL:\n${catboxUrl}`);
-                break;
-            case "audio":
-                repondre(`🔉 Audio URL (MP3):\n${catboxUrl}`);
-                break;
-            case "document":
-                repondre(`📃 Document URL:\n${catboxUrl}`);
-                break;
-            default:
-                repondre(`📎 File URL:\n${catboxUrl}`);
-                break;
-        }
+        const responses = {
+            image: `🖼️ Image URL:\n${cloudinaryUrl}`,
+            video: `🎥 Video URL:\n${cloudinaryUrl}`,
+            audio: `🔊 Audio URL (MP3):\n${cloudinaryUrl}`,
+            document: `📄 Document URL:\n${cloudinaryUrl}`
+        };
+
+        repondre(responses[mediaType] || `✅ File URL:\n${cloudinaryUrl}`);
+
     } catch (error) {
-        console.error("Error in url command:", error);
+        console.error("Error in url2 command:", error);
         if (mediaPath && fs.existsSync(mediaPath)) {
             fs.unlinkSync(mediaPath);
         }

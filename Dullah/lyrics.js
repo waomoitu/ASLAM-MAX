@@ -1,35 +1,82 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
+const {
+  dullah
+} = require("../Aslam/dullah");
+const axios = require("axios");
+const Genius = require("genius-lyrics");
+const Client = new Genius.Client("jKTbbU-6X2B9yWWl-KOm7Mh3_Z6hQsgE4mmvwV3P3Qe7oNa9-hsrLxQV5l5FiAZO");
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+// Define the command with aliases
+dullah({
+  nomCom: "lyrics",
+  aliases: ["mistari", "lyric"],
+  reaction: '📜',
+  categorie: "search"
+}, async (dest, zk, params) => {
+  const { repondre: sendResponse, arg: commandArgs, ms } = params;
+  const text = commandArgs.join(" ").trim();
 
-async function fetchLYRICSUrl() {
-  try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
+  if (!text) {
+    return sendResponse("Please provide a song name.");
+  }
 
-    const targetElement = $('a:contains("LYRICS")');
-    const targetUrl = targetElement.attr('href');
-
-    if (!targetUrl) {
-      throw new Error('LYRICS not found 😭');
+  // Function to get lyrics data from APIs
+  const getLyricsData = async (url) => {
+    try {
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching data from API:', error);
+      return null;
     }
+  };
 
-    console.log('LYRICS loaded successfully ✅');
+  // List of APIs to try
+  const apis = [
+    `https://api.dreaded.site/api/lyrics?title=${encodeURIComponent(text)}`,
+    `https://some-random-api.com/others/lyrics?title=${encodeURIComponent(text)}`,
+    `https://api.davidcyriltech.my.id/lyrics?title=${encodeURIComponent(text)}`
+  ];
 
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
+  let lyricsData;
+  for (const api of apis) {
+    lyricsData = await getLyricsData(api);
+    if (lyricsData && lyricsData.result && lyricsData.result.lyrics) break;
+  }
+
+  // Check if lyrics data was found
+  if (!lyricsData || !lyricsData.result || !lyricsData.result.lyrics) {
+    return sendResponse(`Failed to retrieve lyrics. Please try again.`);
+  }
+
+  const { title, artist, thumb, lyrics } = lyricsData.result;
+  const imageUrl = thumb || "https://url.bwmxmd.online/Dullah.fwzxhzl7.jpg";
+
+  const caption = `
+╭──────────━⊷
+║ *Bot Name:* Aslam max
+║ *Title:* ${title}
+║ *Artist:* ${artist}
+╰──────────━⊷\n\n
+${lyrics}`;
+
+  try {
+    // Fetch the image
+    const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    const imageBuffer = Buffer.from(imageResponse.data, 'binary');
+
+    // Send the message with the image and lyrics
+    await zk.sendMessage(
+      dest,
+      {
+        image: imageBuffer,
+        caption: caption
+      },
+      { quoted: ms }
+    );
 
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error fetching or sending image:', error);
+    // Fallback to sending just the text if image fetch fails
+    await sendResponse(caption);
   }
-}
-
-fetchLYRICSUrl();
+});

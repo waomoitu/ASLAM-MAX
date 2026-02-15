@@ -1,35 +1,90 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
+const { dullah } = require("../Aslam/dullah");
+const moment = require("moment-timezone");
+const s = require(__dirname + "/../config");
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+// Register multiple command triggers
+const commandTriggers = ["cmds", "cmd", "commands", "help", "list"];
 
-async function fetchCMDSUrl() {
-  try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
+commandTriggers.forEach(trigger => {
+    dullah({ 
+        nomCom: trigger, 
+        categorie: "General" 
+    }, async (dest, zk, commandeOptions) => {
+        const { ms, repondre, auteurMsg } = commandeOptions;
+        const { cm } = require("../Aslam/dullah");
+        
+        // Get user's push name or default
+        const userName = commandeOptions?.ms?.pushName || "User";
+        
+        // Format time and date
+        moment.tz.setDefault(s.TZ || "Africa/Nairobi");
+        const time = moment().format("h:mm A");
+        const date = moment().format("DD/MM/YYYY");
+        
+        // Organize commands by category with counts
+        const categories = {};
+        cm.forEach(cmd => {
+            if (!categories[cmd.categorie]) {
+                categories[cmd.categorie] = [];
+            }
+            categories[cmd.categorie].push(cmd.nomCom);
+        });
 
-    const targetElement = $('a:contains("CMDS")');
-    const targetUrl = targetElement.attr('href');
+        // Create category summary with counts
+        let categorySummary = "";
+        for (const [category, commands] of Object.entries(categories)) {
+            categorySummary += `▢ ${category.toUpperCase()} (${commands.length})\n`;
+        }
 
-    if (!targetUrl) {
-      throw new Error('CMDS not found 😭');
-    }
+        // Create full numbered command list
+        let fullCommandList = "";
+        let commandCounter = 1;
+        for (const [category, commands] of Object.entries(categories)) {
+            fullCommandList += `\n*【 ${category.toUpperCase()} 】*\n`;
+            commands.forEach(cmd => {
+                fullCommandList += `${commandCounter++}. ${cmd}\n`;
+            });
+        }
 
-    console.log('CMDS loaded successfully ✅');
+        // Newsletter context
+        const newsletterContext = {
+            forwardingScore: 999,
+            isForwarded: true,
+            mentionedJid: [auteurMsg],
+            forwardedNewsletterMessageInfo: {
+                newsletterJid: "120363402252728845@newsletter",
+                newsletterName: "Aslam max",
+                serverMessageId: Math.floor(100000 + Math.random() * 900000)
+            }
+        };
 
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
+        // Main menu message with your requested format
+        const message = `
+┌─❖ 𓆩 ⚡ 𓆪 ❖─┐
+       Aslam max
+└─❖ 𓆩 ⚡ 𓆪 ❖─┘  
 
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-}
+👤 ᴜsᴇʀ ɴᴀᴍᴇ: ${userName}
+📅 ᴅᴀᴛᴇ: ${date}
+⏰ ᴛɪᴍᴇ: ${time}
 
-fetchCMDSUrl();
+📊 *CATEGORIES (${Object.keys(categories).length})*
+${categorySummary}
+
+📜 *FULL COMMAND LIST (${cm.length})*
+${fullCommandList}
+
+┌─❖
+│
+└┬❖  
+┌┤✑  𝗧𝗵𝗮𝗻𝗸𝘀 𝗳𝗼𝗿 𝘂𝘀𝗶𝗻𝗴 Aslam max
+└────────────┈ ⳹        
+`.trim();
+
+        // Send text message only
+        await zk.sendMessage(dest, {
+            text: message,
+            contextInfo: newsletterContext
+        }, { quoted: ms });
+    });
+});

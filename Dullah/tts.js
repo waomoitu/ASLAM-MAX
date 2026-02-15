@@ -1,35 +1,58 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
+const { dullah } = require("../Aslam/dullah");
+const axios = require("axios"); // Using axios for API requests
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
-
-async function fetchTTSUrl() {
+// Function to get TTS audio URL
+async function getTTS(text, lang) {
   try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
+    const response = await axios.get(`https://api.maskser.me/api/soundoftext`, {
+      params: { text, lang },
+    });
 
-    const targetElement = $('a:contains("TTS")');
-    const targetUrl = targetElement.attr('href');
-
-    if (!targetUrl) {
-      throw new Error('TTS not found 😭');
+    if (response.data && response.data.result) {
+      return response.data.result; // API returns the direct audio URL
     }
-
-    console.log('TTS loaded successfully ✅');
-
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
-
+    return null;
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error("TTS API Error:", error);
+    return null;
   }
 }
 
-fetchTTSUrl();
+// Define TTS commands
+const ttsCommands = [
+  { name: "dit", lang: "fr", response: "👄" },
+  { name: "itta", lang: "ja", response: "👄" },
+  { name: "say", lang: "en-US", response: "👄" }, // Using en-US for better accuracy
+];
+
+// Generate commands dynamically
+ttsCommands.forEach(({ name, lang, response }) => {
+  dullah(
+    {
+      nomCom: name,
+      categorie: "tts",
+      reaction: response,
+    },
+    async (dest, zk, commandeOptions) => {
+      const { ms, arg, repondre } = commandeOptions;
+      if (!arg[0]) {
+        repondre("Insert a word");
+        return;
+      }
+      const mots = arg.join(" ");
+
+      const audioUrl = await getTTS(mots, lang);
+      if (!audioUrl) {
+        repondre("TTS conversion failed. Try again later.");
+        return;
+      }
+
+      console.log(audioUrl);
+      zk.sendMessage(
+        dest,
+        { audio: { url: audioUrl }, mimetype: "audio/mpeg" }, // API provides MP3
+        { quoted: ms, ptt: true }
+      );
+    }
+  );
+});

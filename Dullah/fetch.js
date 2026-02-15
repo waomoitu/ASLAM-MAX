@@ -1,35 +1,63 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
+const { dullah } = require("../Aslam/dullah");
+const { default :axios } = require("axios");
+const { mediafireDl } = require("../Aslam/Function");
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+dullah({
+  nomCom: "fetch",
+  categorie: "Search",
+  reaction: '🛄',
+}, async (_0x34e935, _0x726ab, _0x295c2d) => {
+  const { repondre: _0x356671, arg: _0x3dfafe } = _0x295c2d;
+  const urlInput = _0x3dfafe.join(" ");
 
-async function fetchFETCHUrl() {
+  if (!/^https?:\/\//.test(urlInput)) {
+    return _0x356671("Start the *URL* with http:// or https://");
+  }
+
   try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
+    const url = new URL(urlInput);
+    const fetchUrl = `${url.origin}${url.pathname}?${url.searchParams.toString()}`;
+    const response = await fetch(fetchUrl);
 
-    const targetElement = $('a:contains("FETCH")');
-    const targetUrl = targetElement.attr('href');
-
-    if (!targetUrl) {
-      throw new Error('FETCH not found 😭');
+    if (!response.ok) {
+      return _0x356671("Failed to fetch the URL. Status: " + response.status + " " + response.statusText);
     }
 
-    console.log('FETCH loaded successfully ✅');
+    const contentLength = response.headers.get('content-length');
+    if (contentLength && parseInt(contentLength) > 104857600) {
+      return _0x356671("Content-Length exceeds the limit: " + contentLength);
+    }
 
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
+    const contentType = response.headers.get('content-type');
+    console.log('Content-Type:', contentType);
 
+    const buffer = Buffer.from(await response.arrayBuffer());
+    if (/image\/.*/.test(contentType)) {
+      await _0x726ab.sendMessage(_0x34e935, {
+        image: { url: fetchUrl },
+        caption: "> > *Aslam max*"
+      }, { quoted: _0x295c2d.ms });
+    } else if (/video\/.*/.test(contentType)) {
+      await _0x726ab.sendMessage(_0x34e935, {
+        video: { url: fetchUrl },
+        caption: "> > *Aslam max*"
+      }, { quoted: _0x295c2d.ms });
+    } else if (/text|json/.test(contentType)) {
+      try {
+        const json = JSON.parse(buffer);
+        console.log("Parsed JSON:", json);
+        _0x356671(JSON.stringify(json, null, 2).slice(0, 10000));
+      } catch {
+        _0x356671(buffer.toString().slice(0, 10000));
+      }
+    } else {
+      await _0x726ab.sendMessage(_0x34e935, {
+        document: { url: fetchUrl },
+        caption: "> > *Aslam max*"
+      }, { quoted: _0x295c2d.ms });
+    }
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error("Error fetching data:", error.message);
+    _0x356671("Error fetching data: " + error.message);
   }
-}
-
-fetchFETCHUrl();
+});

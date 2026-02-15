@@ -1,35 +1,50 @@
-//  [BWM-XMD QUANTUM EDITION]                                           
-//  >> A superposition of elegant code states                           
-//  >> Collapsed into optimal execution                                
-//  >> Scripted by Sir Aslam Dullah                                    
-//  >> Version: 8.3.5-quantum.7
 
-const axios = require('axios');
-const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+const { dullah } = require('../Aslam/dullah');
 
-async function fetchQUOTE2Url() {
-  try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
-    const $ = cheerio.load(response.data);
-
-    const targetElement = $('a:contains("QUOTE2")');
-    const targetUrl = targetElement.attr('href');
-
-    if (!targetUrl) {
-      throw new Error('QUOTE2 not found 😭');
-    }
-
-    console.log('QUOTE2 loaded successfully ✅');
-
-    const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
-    eval(scriptResponse.data);
-
-  } catch (error) {
-    console.error('Error:', error.message);
+dullah({ nomCom: 'quote', categorie: 'Fun' }, async (dest, zk, commandeOptions) => {
+  const { ms, repondre, verifGroupe, arg } = commandeOptions;
+  if (!verifGroupe) {
+    repondre('Commande réservée au groupe uniquement');
+    return;
   }
-}
 
-fetchQUOTE2Url();
+  if (!arg[0]) {
+    try {
+      fetch('https://animechan.xyz/api/random')
+        .then((response) => response.json())
+        .then(async (quote) => {
+          repondre(`╔══════════════════════════╗
+║   Aslam max              ║
+╚══════════════════════════╝
+
+🎬 Anime: ${quote.anime}
+👤 Character: ${quote.character}
+💬 Quote: ${quote.quote}
+
+Powered by Aslam max`);
+        });
+    } catch (e) {
+      repondre('Erreur lors de la génération de la citation : ' + e.message);
+    }
+  } else {
+    const query = arg.join(' ');
+
+    try {
+      fetch('https://animechan.xyz/api/random/character?name=' + query)
+        .then((response) => response.json())
+        .then(async (quote) => {
+          repondre(`╔══════════════════════════╗
+║   Aslam max               ║
+╚══════════════════════════╝
+
+🎬 Anime: ${quote.anime}
+👤 Character: ${quote.character}
+💬 Quote: ${quote.quote}
+
+Powered by Aslam max`);
+        });
+    } catch (e) {
+      repondre('Erreur lors de la génération de la citation : ' + e.message);
+    }
+  }
+});

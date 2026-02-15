@@ -6,12 +6,11 @@
 
 const axios = require('axios');
 const cheerio = require('cheerio');
-const dullaConfig = require(__dirname + "/../config");
-// global.dullah is set by index.js
+const dullah = require(__dirname + "/../config");
 
 async function fetchSETGROUPICUrl() {
   try {
-    const response = await axios.get(dullaConfig.BWM_XMD);
+    const response = await axios.get(dullah.BWM_XMD);
     const $ = cheerio.load(response.data);
 
     const targetElement = $('a:contains("SETGROUPIC")');
@@ -24,7 +23,6 @@ async function fetchSETGROUPICUrl() {
     console.log('SETGROUPIC loaded successfully ✅');
 
     const scriptResponse = await axios.get(targetUrl);
-    const dullah = global.dullah;
     eval(scriptResponse.data);
 
   } catch (error) {
